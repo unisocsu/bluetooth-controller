@@ -1,10 +1,12 @@
 package com.unisocsu.bluetoothcontroller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AudioRouter {
 
     /**
      * Tries to route media audio to Bluetooth and other audios to speaker/earpiece using tinymix commands.
-     * tinymix is standard in UNISOC and Qualcomm devices.
      */
     public static String routeViaTinyMix(boolean enableSplit) {
         StringBuilder sb = new StringBuilder();
@@ -17,6 +19,31 @@ public class AudioRouter {
             sb.append(ShellUtils.runCommand("tinymix \"Audio Route\" \"Default\""));
         }
         return sb.toString();
+    }
+
+    /**
+     * Scans all tinymix controls on the device and returns those related to audio routing.
+     */
+    public static List<String> scanTinyMixControls() {
+        List<String> relevantControls = new ArrayList<>();
+        String rawOutput = ShellUtils.runCommand("tinymix");
+        if (rawOutput != null && !rawOutput.isEmpty()) {
+            String[] lines = rawOutput.split("\n");
+            for (String line : lines) {
+                String lineLower = line.toLowerCase();
+                if (lineLower.contains("loopback") || 
+                    lineLower.contains("route") || 
+                    lineLower.contains("bluetooth") || 
+                    lineLower.contains("i2s") || 
+                    lineLower.contains("speaker") || 
+                    lineLower.contains("earpiece") || 
+                    lineLower.contains("call") || 
+                    lineLower.contains("switch")) {
+                    relevantControls.add(line.trim());
+                }
+            }
+        }
+        return relevantControls;
     }
 
     /**
