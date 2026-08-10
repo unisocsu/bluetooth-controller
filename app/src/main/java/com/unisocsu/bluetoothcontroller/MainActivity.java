@@ -116,11 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnStartService.setOnClickListener(v -> {
             Intent intent = new Intent(this, AudioRoutingService.class);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(intent);
-            } else {
-                startService(intent);
-            }
+            startService(intent);
             Toast.makeText(this, "Audio Routing Monitor Started", Toast.LENGTH_SHORT).show();
         });
 
