@@ -67,7 +67,17 @@ public class AudioRoutingService extends Service {
     }
 
     private void createNotificationChannel() {
-        // NotificationChannels are only required for API 26+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "Audio Routing Service Channel",
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.createNotificationChannel(serviceChannel);
+            }
+        }
     }
 
     private class BluetoothReceiver extends BroadcastReceiver {
